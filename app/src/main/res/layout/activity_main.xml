@@ -66,27 +66,11 @@
             android:buttonTint="@color/white"
             />
     </RelativeLayout>
-        <EditText
-            android:id="@+id/passwordAgain"
-            android:layout_below="@id/passwordAndCheck"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:layout_margin="10dp"
-            android:hint="Password again"
-            android:textStyle="bold"
-            android:textColorHint="@color/white"
-            android:textColor="@color/white"
-            android:background="@drawable/rounded_edittext_background"
-            android:padding="10dp"
-            android:inputType="textPassword"
-            android:drawableLeft="@drawable/password"
-            android:drawablePadding="10dp">
-        </EditText>
         <com.google.android.material.button.MaterialButton
             android:id="@+id/loginBTN"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/passwordAgain"
+            android:layout_below="@id/passwordAndCheck"
             android:layout_marginTop="20dp"
             android:layout_centerHorizontal="true"
             android:text="LOGIN">
