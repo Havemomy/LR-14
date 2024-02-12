@@ -1,6 +1,10 @@
 package com.example.registerlogin;
 
+import static androidx.navigation.Navigation.findNavController;
+
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -16,51 +20,15 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class MainActivity extends AppCompatActivity {
+import com.example.registerlogin.databinding.ActivityMainBinding;
 
-    private EditText editTextEmail;
-    private EditText editTextPassword;
+public class MainActivity extends AppCompatActivity {
+    private ActivityMainBinding binding;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        editTextEmail = findViewById(R.id.email);
-        editTextPassword = findViewById(R.id.password);
-        EditText myEditText = findViewById(R.id.password);
-        CheckBox showHidePass = findViewById(R.id.showHidePass);
-        TextView textView = findViewById(R.id.register);
-        Button buttonLog = findViewById(R.id.loginBTN);
-
-        showHidePass.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if (isChecked) {
-                myEditText.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
-            } else {
-                myEditText.setTransformationMethod(PasswordTransformationMethod.getInstance());
-            }
-        });
-        textView.setOnClickListener(v -> {
-            Intent intent = new Intent(this, RegActivity.class);
-            startActivity(intent);
-        });
-        buttonLog.setOnClickListener(v -> validateLogin());
+        binding = ActivityMainBinding.inflate(getLayoutInflater(), null, false);
+        setContentView(binding.getRoot());
     }
-    private void validateLogin() {
-        String loginEmail = editTextEmail.getText().toString().trim();
-        String loginPassword = editTextPassword.getText().toString();
-
-        SharedPreferences preferences = getSharedPreferences("user_data", MODE_PRIVATE);
-        String storedEmail = preferences.getString("email", "");
-        String storedPassword = preferences.getString("password", "");
-
-        if (loginEmail.equals(storedEmail) && loginPassword.equals(storedPassword)) {
-            Intent intent = new Intent(this, SuccsessActivity.class);
-            startActivity(intent);
-
-            Toast.makeText(this, "Вход успешно выполнен", Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(this, "Неверные данные. Попробуйсте снова", Toast.LENGTH_SHORT).show();
-        }
-    }
-
 }
