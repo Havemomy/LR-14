@@ -17,6 +17,11 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
 import com.example.registerlogin.databinding.FragmentLoginBinding;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.util.List;
+import java.util.Optional;
 
 public class LoginFragment extends Fragment {
     private FragmentLoginBinding binding;
@@ -41,16 +46,23 @@ public class LoginFragment extends Fragment {
 
         return binding.getRoot();
     }
+
     private void validateLogin() {
         String loginEmail = binding.email.getText().toString().trim();
         String loginPassword = binding.password.getText().toString();
 
-        SharedPreferences preferences = requireActivity().getSharedPreferences("user_data", Context.MODE_PRIVATE);
-        String storedEmail = preferences.getString("email", "");
-        String storedPassword = preferences.getString("password", "");
+        SharedPreferences preferences = requireContext().getSharedPreferences("user_data", Context.MODE_PRIVATE);
 
-        if (loginEmail.equals(storedEmail) && loginPassword.equals(storedPassword)) {
+        String usersJson = preferences.getString("users", "[]");
+        Gson gson = new Gson();
+        java.lang.reflect.Type type = TypeToken.getParameterized(List.class, User.class).getType();
+        List<User> users = gson.fromJson(usersJson, type);
 
+        Optional<User> first = users.stream()
+                .filter(u -> u.getEmail().equals(loginEmail) && u.getPassword().equals(loginPassword))
+                .findFirst();
+
+        if (first.isPresent()) {
             NavController navController = Navigation.findNavController(requireActivity(), R.id.main_fragment_host);
             navController.navigate(R.id.successActiv);
 

@@ -22,11 +22,14 @@ import androidx.navigation.Navigation;
 
 import com.example.registerlogin.databinding.FragmentRegisterBinding;
 import com.google.android.material.datepicker.MaterialDatePicker;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 public class RegisterFragment extends Fragment {
@@ -55,9 +58,6 @@ public class RegisterFragment extends Fragment {
 
         PhoneNumberFormat.formatPhoneNumber(editTextNumber);
 
-        textView.setOnClickListener(v -> {
-            FragmentManager supportFragmentManager = requireActivity().getSupportFragmentManager();
-        });
 
         binding.registerBTN.setOnClickListener(v -> {
             if (validateAndSaveData()) {
@@ -103,14 +103,28 @@ public class RegisterFragment extends Fragment {
         }
 
         SharedPreferences preferences = requireContext().getSharedPreferences("user_data", Context.MODE_PRIVATE);
+
+        String usersJson = preferences.getString("users", "[]");
+        Gson gson = new Gson();
+        java.lang.reflect.Type type = TypeToken.getParameterized(List.class, User.class).getType();
+        List<User> users = gson.fromJson(usersJson, type);
+
+        if (users.stream().anyMatch(u -> u.getEmail().equals(email))) {
+            editTextEmail.setError("Пользователь уже зарегистрирован");
+            return false;
+        }
+
         SharedPreferences.Editor editor = preferences.edit();
 
-        String hashedPassword = password;
+        User user = new User();
+        user.setEmail(email);
+        user.setPassword(password);
+        user.setBirthday(dateOfBirth);
+        user.setNumber(number);
+        users.add(user);
+        usersJson = gson.toJson(users);
 
-        editor.putString("email", email);
-        editor.putString("number", number);
-        editor.putString("dateOfBirth", dateOfBirth);
-        editor.putString("password", hashedPassword);
+        editor.putString("users", usersJson);
         editor.apply();
 
         return true;
