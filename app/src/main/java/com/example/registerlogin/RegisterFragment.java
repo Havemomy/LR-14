@@ -22,6 +22,7 @@ import androidx.navigation.Navigation;
 
 import com.example.registerlogin.databinding.FragmentRegisterBinding;
 import com.google.android.material.datepicker.MaterialDatePicker;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -35,6 +36,7 @@ import java.util.Locale;
 public class RegisterFragment extends Fragment {
     private FragmentRegisterBinding binding;
 
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
     private EditText editTextEmail;
     private EditText editTextNumber;
     private EditText editTextDateOfBirth;
@@ -104,28 +106,19 @@ public class RegisterFragment extends Fragment {
 
         SharedPreferences preferences = requireContext().getSharedPreferences("user_data", Context.MODE_PRIVATE);
 
-        String usersJson = preferences.getString("users", "[]");
-        Gson gson = new Gson();
-        java.lang.reflect.Type type = TypeToken.getParameterized(List.class, User.class).getType();
-        List<User> users = gson.fromJson(usersJson, type);
+        //String usersJson = preferences.getString("users", "[]");
+        //Gson gson = new Gson();
+        //java.lang.reflect.Type type = TypeToken.getParameterized(List.class, User.class).getType();
+        //List<User> users = gson.fromJson(usersJson, type);
 
-        if (users.stream().anyMatch(u -> u.getEmail().equals(email))) {
-            editTextEmail.setError("Пользователь уже зарегистрирован");
-            return false;
-        }
-
-        SharedPreferences.Editor editor = preferences.edit();
+        db.collection ("PENsl").whereEqualTo("email",email).get().addOnSuccessListener(command -> {editTextEmail.setError("Пользователь уже зарегистрирован");});
 
         User user = new User();
         user.setEmail(email);
         user.setPassword(password);
         user.setBirthday(dateOfBirth);
         user.setNumber(number);
-        users.add(user);
-        usersJson = gson.toJson(users);
-
-        editor.putString("users", usersJson);
-        editor.apply();
+        db.collection("PENsl").add(user);
 
         return true;
     }

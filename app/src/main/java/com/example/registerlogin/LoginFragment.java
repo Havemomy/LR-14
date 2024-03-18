@@ -17,6 +17,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
 import com.example.registerlogin.databinding.FragmentLoginBinding;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -51,25 +52,19 @@ public class LoginFragment extends Fragment {
         String loginEmail = binding.email.getText().toString().trim();
         String loginPassword = binding.password.getText().toString();
 
-        SharedPreferences preferences = requireContext().getSharedPreferences("user_data", Context.MODE_PRIVATE);
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("PENsl").whereEqualTo ("email",loginEmail)
+                .whereEqualTo("password", loginPassword).get().addOnSuccessListener(command -> {
+                    if (command.toObjects(User.class).size()>0) {
+                        NavController navController = Navigation.findNavController(requireActivity(), R.id.main_fragment_host);
+                        navController.navigate(R.id.successActiv);
 
-        String usersJson = preferences.getString("users", "[]");
-        Gson gson = new Gson();
-        java.lang.reflect.Type type = TypeToken.getParameterized(List.class, User.class).getType();
-        List<User> users = gson.fromJson(usersJson, type);
+                        Toast.makeText(requireContext(), "Вход успешно выполнен", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(requireContext(), "Неверные данные. Попробуйсте снова", Toast.LENGTH_SHORT).show();
+                    }
+                });
 
-        Optional<User> first = users.stream()
-                .filter(u -> u.getEmail().equals(loginEmail) && u.getPassword().equals(loginPassword))
-                .findFirst();
-
-        if (first.isPresent()) {
-            NavController navController = Navigation.findNavController(requireActivity(), R.id.main_fragment_host);
-            navController.navigate(R.id.successActiv);
-
-            Toast.makeText(requireContext(), "Вход успешно выполнен", Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(requireContext(), "Неверные данные. Попробуйсте снова", Toast.LENGTH_SHORT).show();
-        }
     }
 
 }

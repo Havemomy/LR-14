@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1075964478634",
+    "project_id": "labas-15",
+    "storage_bucket": "labas-15.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1075964478634:android:d11b6288efc226b7bfbcd3",
+        "android_client_info": {
+          "package_name": "com.example.registerlogin"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDkZNo0pIdg_IKZyQ2_jFbcsChtpoTiJ5M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
